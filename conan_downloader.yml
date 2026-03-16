@@ -1,0 +1,203 @@
+name: Detective Conan - Auto Downloader
+
+"on":
+  schedule:
+    - cron: '0 13 * * 6'
+
+  workflow_dispatch:
+    inputs:
+      magnet_links:
+        description: |
+          [MAGNETS] Video magnets. One per line.
+          Leave blank to use Nyaa search.
+        required: false
+        default: ''
+
+      subtitle_magnet_links:
+        description: |
+          [SUBTITLES] Subtitle magnets. One per line.
+          Use this for separate subtitle torrents.
+        required: false
+        default: ''
+
+      select_files:
+        description: |
+          [MAGNETS] Optional aria2 select-file list for video torrents.
+          Example: 1,3,5 or 1-4.
+        required: false
+        default: ''
+
+      subtitle_select_files:
+        description: |
+          [SUBTITLES] Optional aria2 select-file list for subtitle torrents.
+          Example: 1,3,5 or 1-4.
+        required: false
+        default: ''
+
+      episode_override:
+        description: |
+          [EPISODES] Specific episode or range.
+          Example: 1194 or 1194-1196 or 1194,1196.
+        required: false
+        default: ''
+
+      nyaa_uploader_url:
+        description: |
+          [EPISODES] Optional Nyaa uploader page URL.
+          Example: https://nyaa.si/user/Erai-raws
+        required: false
+        default: ''
+
+      custom_search_query:
+        description: |
+          [EPISODES] Optional custom Nyaa search query.
+        required: false
+        default: ''
+
+      anime_search_query:
+        description: |
+          [BULK SEARCH] Search an anime and download every Nyaa result in 100 GiB style sections.
+        required: false
+        default: ''
+
+      anime_batch_limit_gb:
+        description: |
+          [BULK SEARCH] Max total size per batch in GiB.
+        required: false
+        default: '100'
+
+      anime_batch_index:
+        description: |
+          [BULK SEARCH] Which batch number to download.
+        required: false
+        default: '1'
+
+      anime_max_pages:
+        description: |
+          [BULK SEARCH] How many Nyaa result pages to scan.
+        required: false
+        default: '10'
+
+      movie_mode:
+        description: |
+          [MOVIES] Force all files to be treated as movies.
+          Set to 1 only when needed.
+        required: false
+        default: '0'
+
+      min_free_gb:
+        description: |
+          [STORAGE] Stop before the next torrent if free disk space falls below this GiB value.
+        required: false
+        default: '8'
+
+      stall_zero_seconds:
+        description: |
+          [SOURCE FAILOVER] Switch to another source if a torrent stays near 0 B this long.
+        required: false
+        default: '180'
+
+      low_speed_seconds:
+        description: |
+          [SOURCE FAILOVER] Switch to another source if download speed stays too low this long.
+        required: false
+        default: '180'
+
+      min_speed_mb:
+        description: |
+          [SOURCE FAILOVER] Minimum acceptable download speed in MiB/s.
+        required: false
+        default: '1'
+
+      huge_torrent_threshold_gb:
+        description: |
+          [AUTO SPLIT] If a multi-file torrent is larger than this, split it into sections.
+        required: false
+        default: '350'
+
+      huge_torrent_groups:
+        description: |
+          [AUTO SPLIT] Number of sections for huge multi-file torrents.
+        required: false
+        default: '5'
+
+env:
+  BASE_EPISODE: '1193'
+  BASE_DATE: '2026-03-14'
+  DOWNLOAD_ROOT: downloads
+
+permissions:
+  contents: write
+
+jobs:
+  process:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Free disk space on runner
+        run: |
+          echo 'Disk before cleanup'
+          df -h
+          sudo rm -rf /usr/share/dotnet || true
+          sudo rm -rf /opt/ghc || true
+          sudo rm -rf /usr/local/lib/android || true
+          sudo docker system prune -af || true
+          sudo apt-get clean || true
+          echo 'Disk after cleanup'
+          df -h
+
+      - name: Install system dependencies
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y aria2 ffmpeg unzip
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Python dependencies
+        run: pip install requests beautifulsoup4
+
+      - name: Run Conan automation
+        run: python conan_automation_github.py
+        env:
+          DOODSTREAM_API_KEY: ${{ secrets.DOODSTREAM_API_KEY }}
+          HARD_SUB_FOLDER_ID: ${{ secrets.HARD_SUB_FOLDER_ID }}
+          SOFT_SUB_FOLDER_ID: ${{ secrets.SOFT_SUB_FOLDER_ID }}
+          HTML_FILE: index.html
+          DOWNLOAD_ROOT: ${{ env.DOWNLOAD_ROOT }}
+
+          MAGNET_LINKS: ${{ github.event.inputs.magnet_links || '' }}
+          SUBTITLE_MAGNET_LINKS: ${{ github.event.inputs.subtitle_magnet_links || '' }}
+          SELECT_FILES: ${{ github.event.inputs.select_files || '' }}
+          SUBTITLE_SELECT_FILES: ${{ github.event.inputs.subtitle_select_files || '' }}
+
+          EPISODE_OVERRIDE: ${{ github.event.inputs.episode_override || '' }}
+          NYAA_UPLOADER_URL: ${{ github.event.inputs.nyaa_uploader_url || '' }}
+          CUSTOM_SEARCH: ${{ github.event.inputs.custom_search_query || '' }}
+          ANIME_SEARCH_QUERY: ${{ github.event.inputs.anime_search_query || '' }}
+          ANIME_BATCH_LIMIT_GB: ${{ github.event.inputs.anime_batch_limit_gb || '100' }}
+          ANIME_BATCH_INDEX: ${{ github.event.inputs.anime_batch_index || '1' }}
+          ANIME_MAX_PAGES: ${{ github.event.inputs.anime_max_pages || '10' }}
+          MOVIE_MODE: ${{ github.event.inputs.movie_mode || '0' }}
+
+          MIN_FREE_GB: ${{ github.event.inputs.min_free_gb || '8' }}
+          STALL_ZERO_SECONDS: ${{ github.event.inputs.stall_zero_seconds || '180' }}
+          LOW_SPEED_SECONDS: ${{ github.event.inputs.low_speed_seconds || '180' }}
+          MIN_SPEED_MB: ${{ github.event.inputs.min_speed_mb || '1' }}
+          HUGE_TORRENT_THRESHOLD_GB: ${{ github.event.inputs.huge_torrent_threshold_gb || '350' }}
+          HUGE_TORRENT_GROUPS: ${{ github.event.inputs.huge_torrent_groups || '5' }}
+
+      - name: Upload downloaded files artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: downloaded-files-${{ github.run_id }}
+          path: downloads
+          if-no-files-found: ignore
