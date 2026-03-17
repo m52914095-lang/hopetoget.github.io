@@ -641,6 +641,12 @@
     const EP_SELECTION = 100;
 
     // Your original-dub links (episode 1 + 2-30) from your base file.
+    MOVIE_DB[14].original.hard = "https://doodstream.com/e/1f2ztkjg95pf"; // Movie 14 HS
+    MOVIE_DB[15].original.hard = "https://doodstream.com/e/4w8eab145puv"; // Movie 15 HS
+    MOVIE_DB[18].original.hard = "https://doodstream.com/e/qxssifmtu4zc"; // Movie 18 HS
+    MOVIE_DB[19].original.hard = "https://doodstream.com/e/twjim4novodb"; // Movie 19 HS
+    MOVIE_DB[23].original.hard = "https://doodstream.com/e/18elcegp3sfm"; // Movie 23 HS
+    MOVIE_DB[27].original.hard = "https://doodstream.com/e/pr9ueptlevk1"; // Movie 27 HS
     const EP_DB = {};
     EP_DB[1] = {"original": {"dub": "https://doodstream.com/e/5adljjnnxwyq"}, "remastered": {"hard": "https://doodstream.com/e/rn6jnmy9b6u6"}};
     EP_DB[2] = {"original": {"dub": "https://doodstream.com/e/xkmgptr60uqp"}, "remastered": {}};
@@ -1545,6 +1551,20 @@ function decryptUrl(encrypted) {
       "https://myvidplay.com/e/cxd0sie9yxhp"
     ];
     EP_DB[1] = { original: { dub: "https://myvidplay.com/e/5adljjnnxwyq" } };
+    EP_DB[727] = {"original": {"soft": "https://doodstream.com/e/r6oc9izsraig"}, "remastered": {}};
+    EP_DB[728] = {"original": {"hard": "https://doodstream.com/e/tkr9e8of9hb4", "soft": "https://doodstream.com/e/bii5verwvlxu"}, "remastered": {}};
+    EP_DB[741] = {"original": {"hard": "https://doodstream.com/e/gle8qksw6x9s", "soft": "https://doodstream.com/e/o1yry10cnkcd"}, "remastered": {}};
+    EP_DB[742] = {"original": {"hard": "https://doodstream.com/e/tel35g58w48b", "soft": "https://doodstream.com/e/cijpoqgw6rp6"}, "remastered": {}};
+    EP_DB[743] = {"original": {"hard": "https://doodstream.com/e/1blkhyznaegj", "soft": "https://doodstream.com/e/q78cmc91jkvt"}, "remastered": {}};
+    EP_DB[744] = {"original": {"hard": "https://doodstream.com/e/8vk3r2ikj1lo", "soft": "https://doodstream.com/e/z6jklcj2e0jk"}, "remastered": {}};
+    EP_DB[745] = {"original": {"hard": "https://doodstream.com/e/qgqbjzmltiic", "soft": "https://doodstream.com/e/l1tbiiv8nt9m"}, "remastered": {}};
+    EP_DB[747] = {"original": {"hard": "https://doodstream.com/e/sbv1pju3vxtg", "soft": "https://doodstream.com/e/1otfehliuo8e"}, "remastered": {}};
+    EP_DB[756] = {"original": {"hard": "https://doodstream.com/e/wfe7cuaqqgm4", "soft": "https://doodstream.com/e/mqgcgi59nhn7"}, "remastered": {}};
+    EP_DB[758] = {"original": {"hard": "https://doodstream.com/e/1yg84ikc8d3z", "soft": "https://doodstream.com/e/mbru7arkds0z"}, "remastered": {}};
+    EP_DB[761] = {"original": {"hard": "https://doodstream.com/e/953t71ni94ka", "soft": "https://doodstream.com/e/r2u9hd7caad2"}, "remastered": {}};
+    EP_DB[1190] = {"original": {"hard": "https://doodstream.com/e/qnqjsmg7sjun"}, "remastered": {}};
+    EP_DB[1191] = {"original": {"hard": "https://doodstream.com/e/o11ojff99u8d"}, "remastered": {}};
+    EP_DB[1193] = {"original": {"hard": "https://doodstream.com/e/l5vn4mc79asw", "soft": "https://doodstream.com/e/bjld5kf51qv3"}, "remastered": {}};
     DUB_LINKS_2_30.forEach((url, i) => {
       const ep = i + 2;
       if (!EP_DB[ep]) EP_DB[ep] = { original: {} };
